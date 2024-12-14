@@ -104,7 +104,6 @@ int main() {
       }
       std::string req_mess = command.params[0] + " " + command.params[1];
       zmq::message_t message(req_mess.begin(), req_mess.end());
-      // fmt::print(fg(fmt::color::green), "Sending: {}\n", message.to_string());
       control.publisher.send(message, zmq::send_flags::none);
       control.socket_reply.recv(reply, zmq::recv_flags::none);
       fmt::print(fg(fmt::color::green), "Receiving: {}\n", reply.to_string());

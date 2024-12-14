@@ -18,7 +18,7 @@ Computing::Computing(int id)
   context = zmq::context_t(1);
   subscriber = zmq::socket_t(context, ZMQ_SUB);
   subscriber.connect("tcp://localhost:52000");
-  // Для отправки результатов выполнения программы и получения чего-нибудь
+  // Для отправки результатов выполнения программы без получения ответа
   socet_request = zmq::socket_t(context, ZMQ_PUSH);
   socet_request.connect("tcp://localhost:52001");
   subscriber.setsockopt(ZMQ_SUBSCRIBE, "", 0);
@@ -87,7 +87,6 @@ int main(int argc, char *argv[]) {
     main_process.subscriber.recv(request, zmq::recv_flags::none);
 
     std::string input = request.to_string();
-    // fmt::print(fg(fmt::color::green), "Got message: {}\n", input);
     command = parse_command(input);
 
     if (command.req_id == -1 || command.command == "") {
