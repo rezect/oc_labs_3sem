@@ -1,7 +1,7 @@
 #include "../include/computing.hpp"
-#include <zmq.hpp>
-#include<unistd.h>
 #include <map>
+#include <unistd.h>
+#include <zmq.hpp>
 
 struct ProcessData {
 public:
@@ -9,25 +9,24 @@ public:
   int parent;
 
 public:
-  ProcessData(pid_t pid, int parent);
+  ProcessData(pid_t pid, int parent) : pid(pid), parent(parent) {};
 };
 
 class Control {
 private:
   std::map<int, ProcessData> computings_map;
-  
+
 public:
   zmq::context_t context;
-  zmq::socket_t socket;
+  zmq::socket_t socket_reply;
+  zmq::socket_t publisher;
 
 public:
   Control();
 
   void create_process(int id, int parent = 0);
 
-  int get_pid(int id) {
-    return computings_map.size();
-  }
+  bool ping_process(int id);
 
   void exec_command(int id, char *argv[]);
 
