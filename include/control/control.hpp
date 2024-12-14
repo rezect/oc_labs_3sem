@@ -1,7 +1,4 @@
-#include "../include/computing.hpp"
-#include <map>
-#include <unistd.h>
-#include <zmq.hpp>
+#include "../data/data.hpp"
 
 struct ProcessData {
 public:
@@ -31,4 +28,9 @@ public:
   void exec_command(int id, char *argv[]);
 
   ~Control();
+
+  bool is_data_correct(int id, int parent);
+
+private:
+  void fork_handler(int id, pid_t pid);
 };

@@ -1,19 +1,6 @@
-#include <chrono>
-#include <zmq.hpp>
-#include <fmt/color.h>
-#include <fmt/core.h>
+#include "../data/data.hpp"
 
 enum TimerStats { Active, Inactive };
-
-struct CommandData {
-  std::string command = "";
-  std::vector<std::string> params;
-};
-
-struct ChildCommadData {
-  int req_id;
-  std::string command;
-};
 
 class Computing {
 private:
@@ -24,12 +11,12 @@ private:
 
 public:
   zmq::context_t context;
-  zmq::socket_t socet_request;
+  zmq::socket_t socket_request;
   zmq::socket_t subscriber;
 
 public:
   Computing(int id);
-  
+
   void start_timer();
 
   void stop_timer();
