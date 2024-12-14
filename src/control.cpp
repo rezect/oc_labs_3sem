@@ -1,5 +1,6 @@
 #include "../include/control.hpp"
 #include <iostream>
+#include <signal.h>
 #include <sys/wait.h>
 #include <zmq.hpp>
 
@@ -65,7 +66,8 @@ void Control::create_process(int id, int parent) {
 }
 
 bool Control::ping_process(int id) {
-  pid_t pid = computings_map.find(id)->second.pid;
+  pid_t pid = computings_map.at(id).pid;
+  fmt::print(fg(fmt::color::green), "Ping: {}\n", pid);
   if (kill(pid, 0) == 0) {
     return true;
   } else if (errno == ESRCH) {
@@ -76,7 +78,28 @@ bool Control::ping_process(int id) {
   }
 }
 
+void sigchld_handler(int signum) {
+  int status;
+  pid_t pid;
+
+  // Обрабатываем все завершённые дочерние процессы
+  while ((pid = waitpid(-1, &status, WNOHANG)) > 0) {
+    if (WIFEXITED(status)) {
+      std::cout << "Process " << pid << " exited with status "
+                << WEXITSTATUS(status) << std::endl;
+    } else if (WIFSIGNALED(status)) {
+      std::cout << "Process " << pid << " was terminated by signal "
+                << WTERMSIG(status) << std::endl;
+    }
+  }
+}
+
 int main() {
+  struct sigaction sa;
+  sa.sa_handler = sigchld_handler;
+  sa.sa_flags = SA_RESTART | SA_NOCLDSTOP;
+  sigaction(SIGCHLD, &sa, NULL);
+
   Control control;
   CommandData command;
   std::string request = "";
@@ -107,6 +130,12 @@ int main() {
       control.publisher.send(message, zmq::send_flags::none);
       control.socket_reply.recv(reply, zmq::recv_flags::none);
       fmt::print(fg(fmt::color::green), "Receiving: {}\n", reply.to_string());
+    } else if (command.command == "ping") {
+      if (control.ping_process(std::stoi(command.params[0].c_str()))) {
+        fmt::print(fg(fmt::color::green), "Ok: {}\n", command.params[0]);
+      } else {
+        fmt::print(fg(fmt::color::red), "Error: {}\n", command.params[0]);
+      }
     }
   }
   int result = 0;
