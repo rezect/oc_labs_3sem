@@ -2,6 +2,7 @@
 #include "stdlib.h"
 #include "unistd.h"
 #include "string.h"
+#include <sys/wait.h>
 
 #define _R_ "\x1b[31m"         // red color for child process output color
 #define _G_ "\x1b[32m"         // green color for parent process output color
