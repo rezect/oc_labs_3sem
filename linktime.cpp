@@ -1,7 +1,5 @@
 #include <iostream>
-
-float Square(float A, float B);
-char *translation(long x);
+#include "include/libgeometry.h"
 
 int main() {
   int command;
