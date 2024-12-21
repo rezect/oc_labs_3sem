@@ -1,0 +1,38 @@
+{
+  "jobs": [
+    {
+      "name": "job1",
+      "depends_on": [],
+      "sleep_time": 10,
+      "semaphore": "semaphore1"
+    },
+    {
+      "name": "job2",
+      "depends_on": [
+        "job1"
+      ],
+      "sleep_time": 20,
+      "semaphore": "semaphore1"
+    },
+    {
+      "name": "job3",
+      "depends_on": [
+        "job1"
+      ],
+      "sleep_time": 50,
+      "semaphore": "semaphore2"
+    },
+    {
+      "name": "job4",
+      "depends_on": [
+        "job2",
+        "job3"
+      ],
+      "sleep_time": 10
+    }
+  ],
+  "semaphores": {
+    "semaphore1": 2,
+    "semaphore2": 1
+  }
+}
