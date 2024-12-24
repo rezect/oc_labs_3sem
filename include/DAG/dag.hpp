@@ -9,11 +9,6 @@
 #include <mutex>
 #include <thread>
 
-struct Thread {
-  std::thread thread;
-  std::atomic<bool> is_running;
-};
-
 class DAG {
 private:
   std::unordered_map<std::string, Job> jobs;

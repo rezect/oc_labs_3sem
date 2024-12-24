@@ -47,6 +47,7 @@ bool DAG::has_cycle() const {
   return processed_jobs != jobs.size();
 }
 
+
 void DAG::execute(int max_threads) {
   if (this->has_cycle()) {
     throw std::logic_error("DAG has cycle");
@@ -67,17 +68,20 @@ void DAG::execute(int max_threads) {
   auto worker = [&](const std::string &job_name) {
     try {
       // Эмуляция выполнения задачи с учётом времени сна
-      std::this_thread::sleep_for(
-          std::chrono::milliseconds(jobs[job_name].sleep_time));
       std::cout << "Executing job: " << job_name << std::endl;
+      std::this_thread::sleep_for(
+          std::chrono::seconds(jobs[job_name].sleep_time));
 
       // Уменьшаем счетчики зависимостей у всех связанных задач
       {
         std::lock_guard<std::mutex> lock(jobs_mutex);
-        for (const auto &dependency : jobs[job_name].depends_on) {
-          --local_in_degree[dependency];
-          if (local_in_degree[dependency] == 0) {
-            ready.push(dependency);
+        for (const auto &[name, job] : jobs) {
+          if (std::find(job.depends_on.begin(), job.depends_on.end(), job_name) !=
+              job.depends_on.end()) {
+            --local_in_degree[name];
+            if (local_in_degree[name] == 0) {
+              ready.push(name);
+            }
           }
         }
       }

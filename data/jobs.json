@@ -3,7 +3,7 @@
     {
       "name": "job1",
       "depends_on": [],
-      "sleep_time": 10,
+      "sleep_time": 2,
       "semaphore": "semaphore1"
     },
     {
@@ -11,7 +11,7 @@
       "depends_on": [
         "job1"
       ],
-      "sleep_time": 20,
+      "sleep_time": 5,
       "semaphore": "semaphore1"
     },
     {
@@ -19,7 +19,7 @@
       "depends_on": [
         "job1"
       ],
-      "sleep_time": 50,
+      "sleep_time": 5,
       "semaphore": "semaphore2"
     },
     {
@@ -28,7 +28,7 @@
         "job2",
         "job3"
       ],
-      "sleep_time": 10
+      "sleep_time": 1
     }
   ],
   "semaphores": {
